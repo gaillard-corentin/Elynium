@@ -1,0 +1,1 @@
+Bonjour, en plus d'indiquer les mises à jour, je vous invite à le préciser ici en plus, pour d'eventuel anticapé (comme moi ^^), merci. //Brice PHELISSE
