@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unit Elynium Test.CSharp.Plugins", "Unit Elynium Test.CSharp.Plugins.csproj", "{3A6B9726-5B28-9E96-9BC5-28F71D04FE26}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unit Elynium Test.CSharp", "Unit Elynium Test.CSharp.csproj", "{E6B740B8-DA7E-017C-6844-18A6B109933C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3A6B9726-5B28-9E96-9BC5-28F71D04FE26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A6B9726-5B28-9E96-9BC5-28F71D04FE26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A6B9726-5B28-9E96-9BC5-28F71D04FE26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A6B9726-5B28-9E96-9BC5-28F71D04FE26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6B740B8-DA7E-017C-6844-18A6B109933C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6B740B8-DA7E-017C-6844-18A6B109933C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6B740B8-DA7E-017C-6844-18A6B109933C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6B740B8-DA7E-017C-6844-18A6B109933C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
