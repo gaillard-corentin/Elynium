@@ -1,16 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Camera : MonoBehaviour
+public class CameraPlayer : MonoBehaviour
 {
-
     public float moveSpeed;
-    public int minX, maxX, minZ, maxZ;
+    public int length, width;
+
+
+    int minX = 75;
+    int minZ = 5;
 
     private int border = 5;
-	
-	void Update ()
+
+    void Update()
     {
+        int maxX = width - 75;
+        int maxZ = length - 60;
         var mouseX = Input.mousePosition.x;
         var mouseY = Input.mousePosition.y;
 
