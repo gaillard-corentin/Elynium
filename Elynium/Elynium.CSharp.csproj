@@ -70,6 +70,9 @@
   <ItemGroup>
     <Compile Include="Assets\Camera\Camera.cs" />
     <Compile Include="Assets\Camera\CameraMiniMap.cs" />
+    <Compile Include="Assets\PLayer\Script\CameraPlayer.cs" />
+    <Compile Include="Assets\PLayer\Script\DestroyGameObject.cs" />
+    <Compile Include="Assets\PLayer\Script\GameModeController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\KY_effects\MagicEffectsPackFree\ReadMe.txt" />
