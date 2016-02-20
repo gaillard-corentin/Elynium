@@ -24,25 +24,24 @@ public class CameraPlayer : MonoBehaviour
 
         previousPossition = transform.position;
 
-        if (mouseX < border)
+        if ((mouseX < border || Input.GetKey(KeyCode.LeftArrow)) && !GameModeController.userIsDragging)
         {
             transform.Translate(Vector3.right * -moveSpeed * Time.deltaTime);
         }
-        if (mouseX >= Screen.width - border)
+        if ((mouseX >= Screen.width - border || Input.GetKey(KeyCode.RightArrow)) && !GameModeController.userIsDragging)
         {
             transform.Translate(Vector3.right * moveSpeed * Time.deltaTime);
         }
-        if (mouseY < border)
+        if ((mouseY < border || Input.GetKey(KeyCode.DownArrow)) && !GameModeController.userIsDragging)
         {
             transform.Translate(Vector3.forward * -moveSpeed * Time.deltaTime);
         }
-        if (mouseY >= Screen.height - border)
+        if ((mouseY >= Screen.height - border || Input.GetKey(KeyCode.UpArrow)) && !GameModeController.userIsDragging)
         {
             transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
         }
 
         currentPossition = transform.position;
-
         if (currentPossition.z < minZ || currentPossition.z > maxZ)
         {
             transform.position = previousPossition;

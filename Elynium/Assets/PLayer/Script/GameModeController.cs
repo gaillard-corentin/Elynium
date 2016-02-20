@@ -22,6 +22,13 @@ public class GameModeController : MonoBehaviour
     private static float timLeftBeforeDeclareDrag_;
     private static float clickDragZone_ = 1.3f;
 
+    private float boxWidth_;
+    private float boxHeight_;
+    private float boxTop_;
+    private float boxLeft_;
+    public Vector2 boxStart_;
+    public Vector2 boxFinish_;
+
     void Awake()
     {
         mouseDownPoint_ = Vector3.zero;
@@ -128,22 +135,62 @@ public class GameModeController : MonoBehaviour
         }
 
         Debug.DrawRay(ray.origin, ray.direction * 500, Color.yellow);
+
+        if(userIsDragging)
+        {
+            boxWidth_ = Camera.main.WorldToScreenPoint(mouseDownPoint_).x - Camera.main.WorldToScreenPoint(currentMousePoint).x;
+            boxHeight_ = Camera.main.WorldToScreenPoint(mouseDownPoint_).y - Camera.main.WorldToScreenPoint(currentMousePoint).y;
+            boxLeft_ = Input.mousePosition.x;
+            boxTop_ = Screen.height - Input.mousePosition.y - boxHeight_;
+
+            if(FloatToBool(boxWidth_))
+            {
+                if (FloatToBool(boxHeight_))
+                {
+                    boxStart_ = new Vector2(Input.mousePosition.x, Input.mousePosition.y + boxHeight_);
+                }
+                else
+                {
+                    boxStart_ = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+                }
+            }
+            else if (!FloatToBool(boxWidth_))
+            {
+                if(FloatToBool(boxHeight_))
+                {
+                    boxStart_ = new Vector2(Input.mousePosition.x + boxWidth_, Input.mousePosition.y + boxHeight_);
+                }
+                else
+                {
+                    boxStart_ = new Vector2(Input.mousePosition.x + boxWidth_, Input.mousePosition.y);
+                }
+            }
+        }
+
+        boxFinish_ = new Vector2(boxStart_.x + Unsigned(boxWidth_), boxStart_.y - Unsigned(boxHeight_));
     }
 
     void OnGUI()
     {
         if(userIsDragging)
         {
-            float _boxWigth = Camera.main.WorldToScreenPoint(mouseDownPoint_).x - Camera.main.WorldToScreenPoint(currentMousePoint).x;
-            float _boxHeight = Camera.main.WorldToScreenPoint(mouseDownPoint_).y - Camera.main.WorldToScreenPoint(currentMousePoint).y;
-            float _boxLeft = Input.mousePosition.x;
-            float _boxTop = Screen.height - Input.mousePosition.y - _boxHeight;
-
-            GUI.Box(new Rect(_boxLeft, _boxTop, _boxWigth, _boxHeight), "", mouseDragSkin);
+            GUI.Box(new Rect(boxLeft_, boxTop_, boxWidth_, boxHeight_), "", mouseDragSkin);
         }
     }
 
     #region Function
+
+    public static bool FloatToBool (float value)
+    {
+        return value >= 0f;
+    }
+
+    public static float Unsigned(float value)
+    {
+        if (value < 0f)
+            value *= -1f;
+        return value;
+    }
 
     public bool UserDraggingByPosition(Vector2 _dragStartPoint, Vector2 _newPoint)
     {
