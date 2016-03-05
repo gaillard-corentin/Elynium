@@ -4,18 +4,31 @@ using System.Collections;
 public class CameraPlayer : MonoBehaviour
 {
     public float moveSpeed;
-    public int length, width;
+    public Terrain terrain;
+    public int lengthResolution;
+    public int widthResolution;
 
-
-    int minX = 75;
-    int minZ = 5;
-
+    
     private int border = 5;
+
+
+    int minX;
+    int maxX;
+    int minZ;
+    int maxZ;
+    float currentDistance_;
+
+    void Start()
+    {
+        minX = (int)terrain.transform.position.x + widthResolution;
+        maxX = (int)terrain.terrainData.size.x - widthResolution;
+
+        minZ = (int)terrain.transform.position.z + 5;
+        maxZ = (int)terrain.terrainData.size.z - lengthResolution;
+    }
 
     void Update()
     {
-        int maxX = width - 75;
-        int maxZ = length - 60;
         var mouseX = Input.mousePosition.x;
         var mouseY = Input.mousePosition.y;
 
@@ -41,12 +54,22 @@ public class CameraPlayer : MonoBehaviour
             transform.Translate(Vector3.forward * moveSpeed * Time.deltaTime);
         }
 
-        currentPossition = transform.position;
-        if (currentPossition.z < minZ || currentPossition.z > maxZ)
+        RaycastHit hit;
+
+        if (Physics.Raycast(transform.position, -transform.up, out hit, 100))
         {
-            transform.position = previousPossition;
+            currentDistance_ = Vector3.Distance(transform.position, hit.point);
         }
-        if (currentPossition.x < minX || currentPossition.x > maxX)
+
+        if(currentDistance_ != 35)
+        {
+            transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, 35 - currentDistance_, 0), Time.deltaTime);
+        }
+
+        currentPossition = transform.position;
+        if ((currentPossition.z < minZ || currentPossition.z > maxZ) ||
+            (currentPossition.x < minX || currentPossition.x > maxX) ||
+            (currentPossition.y < 35))
         {
             transform.position = previousPossition;
         }
