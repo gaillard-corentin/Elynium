@@ -7,7 +7,7 @@ public class GameModeController : MonoBehaviour
     RaycastHit hit;
 
 
-    public static GameObject currentlySelectedUnit;
+    public static GameObject canSelectedUnit;
     public static ArrayList currentlySelectedUnits = new ArrayList();
     public static ArrayList unitsOnScreen = new ArrayList();
     public static ArrayList unitsInDrag = new ArrayList();
@@ -18,6 +18,8 @@ public class GameModeController : MonoBehaviour
 
     public GameObject target;
     public GUIStyle mouseDragSkin;
+    public GUIStyle mouseDragSkinBorder;
+    public LayerMask selectMeshLayerask;
 
 
     private static Vector3 mouseDownPoint_;
@@ -68,8 +70,26 @@ public class GameModeController : MonoBehaviour
 
             if(!userIsDragging)
             {
+                if (hit.collider.gameObject.GetComponent<UnitScript>())
+                {
+                    GameObject canSelectedObj = hit.collider.transform.FindChild("CanSelected").gameObject;
+                    canSelectedObj.SetActive(true);
+                    canSelectedUnit = hit.collider.gameObject;
+                }
+                else if(hit.collider.gameObject.layer == LayerMask.NameToLayer("SelectMesh"))
+                {
+                    GameObject canSelectedObj = hit.collider.transform.parent.FindChild("CanSelected").gameObject;
+                    canSelectedObj.SetActive(true);
+                    canSelectedUnit = hit.collider.transform.parent.gameObject;
+                }
+                else if(canSelectedUnit != null)
+                {
+                    canSelectedUnit.transform.FindChild("CanSelected").gameObject.SetActive(false);
+                }
+
                 if (hit.collider.name == "Terrain")
                 {
+                    //quand on fait un clic droit de la souris, creation d'un target
                     if (Input.GetMouseButtonDown(1))
                     {
                         GameObject targetObj = Instantiate(target, hit.point, Quaternion.identity) as GameObject;
@@ -85,36 +105,46 @@ public class GameModeController : MonoBehaviour
                 {
                     if (Input.GetMouseButtonDown(0) && DidUserClickLeftMouse(mouseDownPoint_))
                     {
-                        if (hit.collider.gameObject.GetComponent<UnitScript>())
+                        if (hit.collider.gameObject.GetComponent<UnitScript>() || hit.collider.gameObject.layer == LayerMask.NameToLayer("SelectMesh"))
                         {
-                            if (!UnitAlReadyInCurrentlySelectedUnits(hit.collider.gameObject))
+                            Transform uniGameOject;
+                            if(hit.collider.gameObject.layer == LayerMask.NameToLayer("SelectMesh"))
+                            {
+                                uniGameOject = hit.collider.transform.parent.transform;
+                            }
+                            else
+                            {
+                                uniGameOject = hit.collider.transform;
+                            }
+
+                            if (!UnitAlReadyInCurrentlySelectedUnits(uniGameOject.gameObject))
                             {
                                 if (!Commun.ShiftKeyDown())
                                 {
                                     DeselectedGameObjectIfSelected();
                                 }
 
-                                GameObject selectedObj = hit.collider.transform.FindChild("Selected").gameObject;
+                                GameObject selectedObj = uniGameOject.transform.FindChild("Selected").gameObject;
                                 selectedObj.SetActive(true);
-                                hit.collider.GetComponent<UnitScript>().selected = true;
+                                uniGameOject.GetComponent<UnitScript>().selected = true;
 
-                                currentlySelectedUnits.Add(hit.collider.gameObject);
+                                currentlySelectedUnits.Add(uniGameOject.gameObject);
                             }
                             else
                             {
                                 if (Commun.ShiftKeyDown())
                                 {
-                                    RemoveUnitFrontCurrentlySelectedUnits(hit.collider.gameObject);
+                                    RemoveUnitFrontCurrentlySelectedUnits(uniGameOject.gameObject);
                                 }
                                 else
                                 {
                                     DeselectedGameObjectIfSelected();
 
-                                    GameObject selectedObj = hit.collider.transform.FindChild("Selected").gameObject;
+                                    GameObject selectedObj = uniGameOject.transform.FindChild("Selected").gameObject;
                                     selectedObj.SetActive(true);
-                                    hit.collider.GetComponent<UnitScript>().selected = true;
+                                    uniGameOject.GetComponent<UnitScript>().selected = true;
 
-                                    currentlySelectedUnits.Add(hit.collider.gameObject);
+                                    currentlySelectedUnits.Add(uniGameOject.gameObject);
                                 }
                             }
                         }
@@ -216,9 +246,41 @@ public class GameModeController : MonoBehaviour
 
     void OnGUI()
     {
-        if(userIsDragging)
+        if (userIsDragging)
         {
+            float boxHeight_y = 0;
+            float boxWidth_x = 0;
+            float x = 0;
+            float y = 0;
+
+            if (boxHeight_ < 0)
+            {
+                boxHeight_y = boxHeight_ + boxTop_ + 2;
+                y = -2;
+            }
+            else
+            {
+                boxHeight_y = boxHeight_ + boxTop_ - 2;
+                y = 2;
+            }
+
+            if (boxWidth_ < 0)
+            {
+                boxWidth_x = boxWidth_ + boxLeft_ + 2;
+                x = -2;
+            }
+            else
+            {
+                boxWidth_x = boxWidth_ + boxLeft_ - 2;
+                x = 2;
+            }
+
             GUI.Box(new Rect(boxLeft_, boxTop_, boxWidth_, boxHeight_), "", mouseDragSkin);
+
+            GUI.Box(new Rect(boxLeft_, boxTop_, boxWidth_, y), "", mouseDragSkinBorder);
+            GUI.Box(new Rect(boxLeft_, boxTop_, x, boxHeight_), "", mouseDragSkinBorder);
+            GUI.Box(new Rect(boxLeft_, boxHeight_y, boxWidth_, y), "", mouseDragSkinBorder);
+            GUI.Box(new Rect(boxWidth_x, boxTop_, x, boxHeight_), "", mouseDragSkinBorder);
         }
     }
 
@@ -228,15 +290,17 @@ public class GameModeController : MonoBehaviour
     {
         return ((_newPoint.x > _dragStartPoint.x + clickDragZone_ || _newPoint.x < _dragStartPoint.x - clickDragZone_) ||
                 (_newPoint.y > _dragStartPoint.y + clickDragZone_ || _newPoint.y < _dragStartPoint.y - clickDragZone_));
-    }//true
+    }
 
+    //verifie si l'utilisateur a cliqué sur la souris
     public bool DidUserClickLeftMouse(Vector3 _hitPoint)
     {
         return ((mouseDownPoint_.x < _hitPoint.x + clickDragZone_ && mouseDownPoint_.x > _hitPoint.x - clickDragZone_) &&
                 (mouseDownPoint_.y < _hitPoint.y + clickDragZone_ && mouseDownPoint_.y > _hitPoint.y - clickDragZone_) &&
                 (mouseDownPoint_.z < _hitPoint.z + clickDragZone_ && mouseDownPoint_.z > _hitPoint.z - clickDragZone_));
-    }//true
+    }
 
+    //deselectionne l'objet selectionné
     public static void DeselectedGameObjectIfSelected()
     {
         if (currentlySelectedUnits.Count > 0)
@@ -249,9 +313,9 @@ public class GameModeController : MonoBehaviour
             }
             currentlySelectedUnits.Clear();
         }
-    }//true
+    }
 
-    public static bool UnitAlReadyInCurrentlySelectedUnits(GameObject _unit)//true
+    public static bool UnitAlReadyInCurrentlySelectedUnits(GameObject _unit)
     {
         if (currentlySelectedUnits.Count > 0)
         {
@@ -282,12 +346,12 @@ public class GameModeController : MonoBehaviour
                 }
             }
         }
-    }//true
+    }
 
     public static bool UnitsWithinScreenSpace(Vector2 _unitScreenPos)
     {
         return ((_unitScreenPos.x < Screen.width && _unitScreenPos.y < Screen.height) && (_unitScreenPos.x > 0f && _unitScreenPos.y > 0f));
-    }//true
+    }
 
     public static void RemoveFromOnScreenUnits(GameObject _unit)
     {
@@ -302,13 +366,13 @@ public class GameModeController : MonoBehaviour
             }
         }
         return;
-    }//true
+    }
 
     public static bool UnitInsideDrag(Vector2 _unitScreenPos)
     {
         return ((_unitScreenPos.x > boxStart.x && _unitScreenPos.y < boxStart.y) &&
                 (_unitScreenPos.x < boxFinish.x && _unitScreenPos.y > boxFinish.y));
-    }//true
+    }
 
     public static bool UnitAlreadyInDraggedUnits(GameObject _unit)
     {
@@ -324,7 +388,7 @@ public class GameModeController : MonoBehaviour
             }
         }
         return false;
-    }//true
+    }
 
     public static void PutDraggedUnitsInCurrentlySelectedUnits()
     {
@@ -348,6 +412,6 @@ public class GameModeController : MonoBehaviour
 
             unitsInDrag.Clear();
         }
-    }//true
+    }
     #endregion
 }

@@ -18,6 +18,11 @@ public class UnitScript : MonoBehaviour
             transform.FindChild("Selected").gameObject.SetActive(false);
         }
 
+        if (transform.FindChild("CanSelected") != null)
+        {
+            transform.FindChild("CanSelected").gameObject.SetActive(false);
+        }
+
         if (transform.FindChild("DragSelected") != null)
         {
             dragSelected_ = transform.FindChild("DragSelected").gameObject;
