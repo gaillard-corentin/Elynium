@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/MapElynium/ElyniumTest/ElyniumTestMap.unity
+- path: Assets/Menu/Jeu.unity
   isLoaded: 1
   isActive: 1
